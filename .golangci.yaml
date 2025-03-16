@@ -1,0 +1,50 @@
+run:
+  build-tags:
+    - test
+  timeout: 5m
+
+linters:
+  # I'll track the golangci-lint default linters manually
+  # instead of letting them change without my control.
+  disable-all: true
+  # For a full list, see: https://golangci-lint.run/usage/linters/
+  enable:
+      - errcheck      # Checks for unused variables, constants, etc.
+      - gofmt         # Checks if code is formatted with gofmt
+      - goimports     # Checks for missing or unreferenced imports
+      - gosimple      # Simplifies Go code by eliminating unnecessary code constructs.
+      - govet         # Catches suspicious constructs (Go's native vet)
+      - ineffassign   # Detects and reports assignments to variables that are never used.
+      - staticcheck   # Static analysis
+      - unused        # Checks for unused variables, constants, etc.
+      - gofumpt       # A stricter version of gofmt for enforcing more consistent code formatting.
+      - nolintlint    # Lints `nolint` directives to ensure they are used correctly and appropriately.
+      - revive        # A highly configurable Go linter with a wide range of checks for code quality and style.
+
+linters-settings:
+  govet:
+    # These govet checks are disabled by default, but they're useful.
+    enable:
+      - nilness
+      - sortslice
+      - unusedwrite
+  staticcheck:
+    checks:
+      - all
+
+issues:
+  # Print all issues reported by all linters.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+  # Don't ignore some of the issues that golangci-lint considers okay.
+  # This includes documenting all exported entities.
+  exclude-use-default: false
+
+  exclude-rules:
+    # staticcheck already has smarter checks for empty blocks.
+    # revive's empty-block linter has false positives.
+    # For example, as of writing this, the following is not allowed.
+    #   for foo() { }
+    - linters: [ revive ]
+      text: 'empty-block: this block is empty, you can remove it'
